@@ -29,14 +29,24 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build
       
-    - name: Upload APK
+    - name: Upload Debug APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: app-debug
+        # Ruta correcta para el APK de depuración
+        path: app/build/outputs/apk/debug/app-debug.apk
+        
+    - name: Upload Release APK (si existe)
       uses: actions/upload-artifact@v4
       with:
         name: app-release
-        path: app/build/outputs/apk/release/app-release.apk
+        # Ruta correcta para el APK de release
+        path: app/build/outputs/apk/release/app-release-unsigned.apk
         
     - name: Create Release
       if: startsWith(github.ref, 'refs/tags/')
       uses: softprops/action-gh-release@v1
       with:
-        files: app/build/outputs/apk/release/app-release.apk
+        files: |
+          app/build/outputs/apk/debug/app-debug.apk
+          app/build/outputs/apk/release/app-release-unsigned.apk
