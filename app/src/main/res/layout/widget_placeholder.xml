@@ -4,13 +4,16 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:background="#4CAF50">
+    android:background="#4CAF50"
+    android:padding="16dp">
 
     <TextView
+        android:id="@android:id/text1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Widget Placeholder"
+        android:text="Widget"
         android:textColor="@android:color/white"
-        android:textSize="16sp"/>
+        android:textSize="16sp"
+        android:gravity="center"/>
 
 </LinearLayout>

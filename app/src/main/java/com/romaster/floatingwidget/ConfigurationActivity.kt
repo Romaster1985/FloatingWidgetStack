@@ -1,8 +1,6 @@
 package com.romaster.floatingwidget
 
 import android.appwidget.AppWidgetManager
-import android.content.ComponentName
-import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.Toast
@@ -15,6 +13,7 @@ class ConfigurationActivity : AppCompatActivity() {
     private lateinit var widgetManager: WidgetManager
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: WidgetSelectionAdapter
+    private val selectedWidgets = mutableListOf<WidgetInfo>()
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,17 +21,24 @@ class ConfigurationActivity : AppCompatActivity() {
         
         widgetManager = WidgetManager(this)
         
+        // Cargar widgets ya seleccionados
+        selectedWidgets.addAll(widgetManager.getSelectedWidgets())
+        
         recyclerView = findViewById(R.id.recycler_widgets)
         recyclerView.layoutManager = LinearLayoutManager(this)
         
         adapter = WidgetSelectionAdapter(
             onWidgetSelected = { widgetInfo ->
-                widgetManager.addWidget(widgetInfo)
-                adapter.updateList(widgetManager.getWidgetList())
+                if (!selectedWidgets.any { it.packageName == widgetInfo.packageName && it.className == widgetInfo.className }) {
+                    selectedWidgets.add(widgetInfo)
+                    widgetManager.saveSelectedWidgets(selectedWidgets)
+                    updateAdapterLists()
+                }
             },
             onWidgetRemoved = { widgetInfo ->
-                widgetManager.removeWidget(widgetInfo)
-                adapter.updateList(widgetManager.getWidgetList())
+                selectedWidgets.removeAll { it.packageName == widgetInfo.packageName && it.className == widgetInfo.className }
+                widgetManager.saveSelectedWidgets(selectedWidgets)
+                updateAdapterLists()
             }
         )
         
@@ -48,8 +54,8 @@ class ConfigurationActivity : AppCompatActivity() {
     }
     
     private fun loadAvailableWidgets() {
-        val widgetManager = AppWidgetManager.getInstance(this)
-        val widgets = widgetManager.installedProviders
+        val appWidgetManager = AppWidgetManager.getInstance(this)
+        val widgets = appWidgetManager.installedProviders
         
         val availableWidgets = widgets.map { provider ->
             WidgetInfo(
@@ -60,6 +66,10 @@ class ConfigurationActivity : AppCompatActivity() {
         }
         
         adapter.setAvailableWidgets(availableWidgets)
-        adapter.updateList(widgetManager.getWidgetList())
+        updateAdapterLists()
+    }
+    
+    private fun updateAdapterLists() {
+        adapter.updateList(selectedWidgets)
     }
 }

@@ -11,14 +11,15 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import android.widget.Button
+import android.widget.TextView
 import android.widget.ViewFlipper
-import androidx.viewpager2.widget.ViewPager2
 
 class FloatingWidgetService : Service() {
     
     private lateinit var windowManager: WindowManager
     private lateinit var floatingView: View
     private lateinit var viewFlipper: ViewFlipper
+    private lateinit var txtPageIndicator: TextView
     private var initialX = 0
     private var initialY = 0
     private var initialTouchX = 0f
@@ -50,8 +51,9 @@ class FloatingWidgetService : Service() {
             y = 100
         }
         
-        // Hacer el overlay arrastrable
-        floatingView.setOnTouchListener { view, event ->
+        // Hacer el overlay arrastrable (solo desde la barra de título)
+        val dragHandle = floatingView.findViewById<View>(R.id.drag_handle)
+        dragHandle.setOnTouchListener { view, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     initialX = params.x
@@ -72,17 +74,24 @@ class FloatingWidgetService : Service() {
         
         // Configurar ViewFlipper para los widgets
         viewFlipper = floatingView.findViewById(R.id.widget_flipper)
+        txtPageIndicator = floatingView.findViewById(R.id.txt_page_indicator)
         
         // Botones de navegación
         val btnPrev = floatingView.findViewById<Button>(R.id.btn_prev)
         val btnNext = floatingView.findViewById<Button>(R.id.btn_next)
         
         btnPrev.setOnClickListener {
-            viewFlipper.showPrevious()
+            if (viewFlipper.childCount > 0) {
+                viewFlipper.showPrevious()
+                updatePageIndicator()
+            }
         }
         
         btnNext.setOnClickListener {
-            viewFlipper.showNext()
+            if (viewFlipper.childCount > 0) {
+                viewFlipper.showNext()
+                updatePageIndicator()
+            }
         }
         
         // Agregar la vista al WindowManager
@@ -94,14 +103,37 @@ class FloatingWidgetService : Service() {
     
     private fun loadWidgets() {
         val widgetManager = WidgetManager(this)
-        val widgets = widgetManager.getWidgetList()
+        val widgets = widgetManager.getSelectedWidgets()
         
-        // Aquí cargaremos los widgets en el ViewFlipper
-        // Por ahora solo añadimos vistas de ejemplo
-        for (i in widgets.indices) {
-            val dummyView = LayoutInflater.from(this).inflate(R.layout.widget_placeholder, null)
-            viewFlipper.addView(dummyView)
+        viewFlipper.removeAllViews()
+        
+        if (widgets.isEmpty()) {
+            // Mostrar mensaje si no hay widgets
+            val emptyView = LayoutInflater.from(this).inflate(R.layout.widget_placeholder, null)
+            val textView = emptyView.findViewById<TextView>(android.R.id.text1)
+            if (textView != null) {
+                textView.text = "Sin widgets\nConfigura en la app"
+            }
+            viewFlipper.addView(emptyView)
+        } else {
+            // Crear una vista placeholder por cada widget seleccionado
+            for (widget in widgets) {
+                val widgetView = LayoutInflater.from(this).inflate(R.layout.widget_placeholder, null)
+                val textView = widgetView.findViewById<TextView>(android.R.id.text1)
+                if (textView != null) {
+                    textView.text = widget.label
+                }
+                viewFlipper.addView(widgetView)
+            }
         }
+        
+        updatePageIndicator()
+    }
+    
+    private fun updatePageIndicator() {
+        val current = viewFlipper.displayedChild + 1
+        val total = viewFlipper.childCount
+        txtPageIndicator.text = "$current/$total"
     }
     
     override fun onBind(intent: Intent?): IBinder? = null

@@ -15,29 +15,39 @@ class WidgetManager(context: Context) {
     
     private val prefs: SharedPreferences = context.getSharedPreferences("widget_prefs", Context.MODE_PRIVATE)
     private val gson = Gson()
+    private val SELECTED_WIDGETS_KEY = "selected_widgets"
     
-    fun getWidgetList(): MutableList<WidgetInfo> {
-        val json = prefs.getString("widgets", null) ?: return mutableListOf()
+    fun getSelectedWidgets(): MutableList<WidgetInfo> {
+        val json = prefs.getString(SELECTED_WIDGETS_KEY, null) ?: return mutableListOf()
         val type = object : TypeToken<MutableList<WidgetInfo>>() {}.type
-        return gson.fromJson(json, type)
+        return try {
+            gson.fromJson(json, type)
+        } catch (e: Exception) {
+            mutableListOf()
+        }
     }
     
-    fun saveWidgetList(widgets: List<WidgetInfo>) {
+    fun saveSelectedWidgets(widgets: List<WidgetInfo>) {
         val json = gson.toJson(widgets)
-        prefs.edit().putString("widgets", json).apply()
+        prefs.edit().putString(SELECTED_WIDGETS_KEY, json).apply()
     }
+    
+    // Método para mantener compatibilidad con el código existente
+    fun getWidgetList(): MutableList<WidgetInfo> = getSelectedWidgets()
+    
+    fun saveWidgetList(widgets: List<WidgetInfo>) = saveSelectedWidgets(widgets)
     
     fun addWidget(widget: WidgetInfo) {
-        val list = getWidgetList().toMutableList()
+        val list = getSelectedWidgets().toMutableList()
         if (!list.any { it.packageName == widget.packageName && it.className == widget.className }) {
             list.add(widget)
-            saveWidgetList(list)
+            saveSelectedWidgets(list)
         }
     }
     
     fun removeWidget(widget: WidgetInfo) {
-        val list = getWidgetList().toMutableList()
+        val list = getSelectedWidgets().toMutableList()
         list.removeAll { it.packageName == widget.packageName && it.className == widget.className }
-        saveWidgetList(list)
+        saveSelectedWidgets(list)
     }
 }

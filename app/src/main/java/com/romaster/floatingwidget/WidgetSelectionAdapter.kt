@@ -34,6 +34,8 @@ class WidgetSelectionAdapter(
         return if (position < availableWidgets.size) TYPE_AVAILABLE else TYPE_SELECTED
     }
     
+    override fun getItemCount(): Int = availableWidgets.size + selectedWidgets.size
+    
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             TYPE_AVAILABLE -> {
@@ -52,17 +54,20 @@ class WidgetSelectionAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is AvailableViewHolder -> {
-                val widget = availableWidgets[position]
-                holder.bind(widget)
+                if (position < availableWidgets.size) {
+                    val widget = availableWidgets[position]
+                    holder.bind(widget)
+                }
             }
             is SelectedViewHolder -> {
-                val widget = selectedWidgets[position - availableWidgets.size]
-                holder.bind(widget)
+                val selectedIndex = position - availableWidgets.size
+                if (selectedIndex < selectedWidgets.size) {
+                    val widget = selectedWidgets[selectedIndex]
+                    holder.bind(widget)
+                }
             }
         }
     }
-    
-    override fun getItemCount(): Int = availableWidgets.size + selectedWidgets.size
     
     inner class AvailableViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val tvName: TextView = itemView.findViewById(R.id.tv_widget_name)

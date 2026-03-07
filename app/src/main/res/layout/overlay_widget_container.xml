@@ -16,19 +16,13 @@
         android:id="@+id/drag_handle">
 
         <TextView
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="Widget Stack"
             android:textColor="@android:color/white"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:gravity="center"/>
 
-        <Button
-            android:id="@+id/btn_close"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:background="@drawable/ic_close"
-            android:layout_marginRight="4dp"/>
     </LinearLayout>
 
     <!-- Contenedor de widgets apilados -->
