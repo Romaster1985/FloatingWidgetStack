@@ -14,28 +14,28 @@ class WidgetSelectionAdapter(
 
     private var availableWidgets = listOf<WidgetInfo>()
     private var selectedWidgets = listOf<WidgetInfo>()
-    
+
     companion object {
         private const val TYPE_AVAILABLE = 0
         private const val TYPE_SELECTED = 1
     }
-    
+
     fun setAvailableWidgets(widgets: List<WidgetInfo>) {
         availableWidgets = widgets
         notifyDataSetChanged()
     }
-    
+
     fun updateList(selected: List<WidgetInfo>) {
         selectedWidgets = selected
         notifyDataSetChanged()
     }
-    
+
     override fun getItemViewType(position: Int): Int {
         return if (position < availableWidgets.size) TYPE_AVAILABLE else TYPE_SELECTED
     }
-    
+
     override fun getItemCount(): Int = availableWidgets.size + selectedWidgets.size
-    
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             TYPE_AVAILABLE -> {
@@ -50,7 +50,7 @@ class WidgetSelectionAdapter(
             }
         }
     }
-    
+
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is AvailableViewHolder -> {
@@ -68,11 +68,11 @@ class WidgetSelectionAdapter(
             }
         }
     }
-    
+
     inner class AvailableViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val tvName: TextView = itemView.findViewById(R.id.tv_widget_name)
+        private val tvName: TextView = itemView.findViewById(R.id.widget_name)
         private val btnAdd: Button = itemView.findViewById(R.id.btn_add)
-        
+
         fun bind(widget: WidgetInfo) {
             tvName.text = widget.label
             btnAdd.setOnClickListener {
@@ -80,11 +80,11 @@ class WidgetSelectionAdapter(
             }
         }
     }
-    
+
     inner class SelectedViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val tvName: TextView = itemView.findViewById(R.id.tv_widget_name)
+        private val tvName: TextView = itemView.findViewById(R.id.widget_name)
         private val btnRemove: Button = itemView.findViewById(R.id.btn_remove)
-        
+
         fun bind(widget: WidgetInfo) {
             tvName.text = widget.label
             btnRemove.setOnClickListener {

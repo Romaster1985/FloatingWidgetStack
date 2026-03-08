@@ -1,53 +1,64 @@
 package com.romaster.floatingwidget
 
+import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
+import android.os.Parcelable
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class WidgetInfo(
     val packageName: String,
     val className: String,
-    val label: String
-)
+    val label: String,
+    val previewImage: Int = 0
+) : Parcelable
 
-class WidgetManager(context: Context) {
+class WidgetManager(private val context: Context) {
     
     private val prefs: SharedPreferences = context.getSharedPreferences("widget_prefs", Context.MODE_PRIVATE)
     private val gson = Gson()
-    private val SELECTED_WIDGETS_KEY = "selected_widgets"
     
-    fun getSelectedWidgets(): MutableList<WidgetInfo> {
-        val json = prefs.getString(SELECTED_WIDGETS_KEY, null) ?: return mutableListOf()
-        val type = object : TypeToken<MutableList<WidgetInfo>>() {}.type
+    fun getAvailableWidgets(): List<WidgetInfo> {
+        val appWidgetManager = AppWidgetManager.getInstance(context)
+        val providers = appWidgetManager.installedProviders
+        
+        return providers.mapNotNull { provider ->
+            try {
+                context.packageManager.getReceiverInfo(provider.provider, PackageManager.GET_META_DATA)
+                WidgetInfo(
+                    packageName = provider.provider.packageName,
+                    className = provider.provider.className,
+                    label = provider.loadLabel(context.packageManager).toString(),
+                    previewImage = provider.previewImage
+                )
+            } catch (e: Exception) {
+                null
+            }
+        }.sortedBy { it.label }
+    }
+    
+    fun getSelectedWidgets(): List<WidgetInfo> {
+        val json = prefs.getString("selected_widgets", null) ?: return emptyList()
+        val type = object : TypeToken<List<WidgetInfo>>() {}.type
         return try {
             gson.fromJson(json, type)
         } catch (e: Exception) {
-            mutableListOf()
+            emptyList()
         }
     }
     
     fun saveSelectedWidgets(widgets: List<WidgetInfo>) {
         val json = gson.toJson(widgets)
-        prefs.edit().putString(SELECTED_WIDGETS_KEY, json).apply()
+        prefs.edit().putString("selected_widgets", json).apply()
     }
-    
-    // Método para mantener compatibilidad con el código existente
-    fun getWidgetList(): MutableList<WidgetInfo> = getSelectedWidgets()
-    
-    fun saveWidgetList(widgets: List<WidgetInfo>) = saveSelectedWidgets(widgets)
-    
-    fun addWidget(widget: WidgetInfo) {
-        val list = getSelectedWidgets().toMutableList()
-        if (!list.any { it.packageName == widget.packageName && it.className == widget.className }) {
-            list.add(widget)
-            saveSelectedWidgets(list)
-        }
-    }
-    
+
     fun removeWidget(widget: WidgetInfo) {
-        val list = getSelectedWidgets().toMutableList()
-        list.removeAll { it.packageName == widget.packageName && it.className == widget.className }
-        saveSelectedWidgets(list)
+        val current = getSelectedWidgets().toMutableList()
+        current.removeAll { it.packageName == widget.packageName && it.className == widget.className }
+        saveSelectedWidgets(current)
     }
 }

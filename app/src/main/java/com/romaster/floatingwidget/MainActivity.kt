@@ -10,40 +10,36 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
-    
-    private val OVERLAY_PERMISSION_REQUEST = 1001
-    
+
+    private val OVERLAY_PERMISSION_REQUEST = 1000
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        
-        val btnStart = findViewById<Button>(R.id.btn_start_overlay)
-        val btnConfigure = findViewById<Button>(R.id.btn_configure)
-        val btnRequestPermission = findViewById<Button>(R.id.btn_request_permission)
-        
-        btnRequestPermission.setOnClickListener {
+
+        findViewById<Button>(R.id.btn_request_permission).setOnClickListener {
             requestOverlayPermission()
         }
-        
-        btnStart.setOnClickListener {
+
+        findViewById<Button>(R.id.btn_configure).setOnClickListener {
+            startActivity(Intent(this, WidgetConfigurationActivity::class.java))
+        }
+
+        findViewById<Button>(R.id.btn_start).setOnClickListener {
             if (checkOverlayPermission()) {
-                startFloatingService()
+                startFloatingLauncher()
             } else {
-                Toast.makeText(this, "Primero concede el permiso", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Primero concede el permiso de overlay", Toast.LENGTH_SHORT).show()
             }
         }
-        
-        btnConfigure.setOnClickListener {
-            startActivity(Intent(this, ConfigurationActivity::class.java))
-        }
     }
-    
+
     private fun checkOverlayPermission(): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             Settings.canDrawOverlays(this)
         } else true
     }
-    
+
     private fun requestOverlayPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val intent = Intent(
@@ -53,17 +49,17 @@ class MainActivity : AppCompatActivity() {
             startActivityForResult(intent, OVERLAY_PERMISSION_REQUEST)
         }
     }
-    
-    private fun startFloatingService() {
-        val intent = Intent(this, FloatingWidgetService::class.java)
+
+    private fun startFloatingLauncher() {
+        val intent = Intent(this, FloatingLauncherService::class.java)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(intent)
         } else {
             startService(intent)
         }
-        finish() // Cerrar la actividad
+        finish()
     }
-    
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == OVERLAY_PERMISSION_REQUEST) {

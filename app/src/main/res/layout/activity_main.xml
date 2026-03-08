@@ -3,29 +3,31 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
-    android:gravity="center">
+    android:gravity="center"
+    android:padding="16dp">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Floating Widget Stack"
+        android:text="Launcher Flotante de Widgets"
         android:textSize="24sp"
         android:textStyle="bold"
+        android:gravity="center"
         android:padding="16dp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Widgets flotantes apilables"
+        android:text="Un launcher minimalista que flota sobre cualquier app"
         android:textSize="16sp"
+        android:gravity="center"
         android:padding="16dp"/>
 
     <Button
         android:id="@+id/btn_request_permission"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="1. Conceder permiso"
+        android:text="1. Conceder permiso de overlay"
         android:layout_margin="8dp"/>
 
     <Button
@@ -36,10 +38,10 @@
         android:layout_margin="8dp"/>
 
     <Button
-        android:id="@+id/btn_start_overlay"
+        android:id="@+id/btn_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="3. Iniciar overlay"
+        android:text="3. Iniciar Launcher Flotante"
         android:layout_margin="8dp"/>
 
 </LinearLayout>

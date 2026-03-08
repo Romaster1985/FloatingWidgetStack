@@ -1,4 +1,4 @@
-name: Build Floating Widget Stack
+name: Build Widget Launcher Flotante
 
 on:
   push:
@@ -11,10 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Set up JDK 17
+    - uses: actions/checkout@v4
+    
+    - name: set up JDK 17
       uses: actions/setup-java@v4
       with:
         java-version: '17'
@@ -29,24 +28,8 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build
       
-    - name: Upload Debug APK
+    - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: app-debug
-        # Ruta correcta para el APK de depuración
         path: app/build/outputs/apk/debug/app-debug.apk
-        
-    - name: Upload Release APK (si existe)
-      uses: actions/upload-artifact@v4
-      with:
-        name: app-release
-        # Ruta correcta para el APK de release
-        path: app/build/outputs/apk/release/app-release-unsigned.apk
-        
-    - name: Create Release
-      if: startsWith(github.ref, 'refs/tags/')
-      uses: softprops/action-gh-release@v1
-      with:
-        files: |
-          app/build/outputs/apk/debug/app-debug.apk
-          app/build/outputs/apk/release/app-release-unsigned.apk

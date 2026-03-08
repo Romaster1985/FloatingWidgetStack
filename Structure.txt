@@ -2,24 +2,24 @@ FloatingWidgetStack/
 ├── .github/workflows/build.yml
 ├── app/
 │   ├── src/main/
-│   │   ├── java/com/tudominio/floatingwidget/
-│   │   │   ├── FloatingWidgetService.kt
+│   │   ├── java/com/romaster/floatingwidget/
+│   │   │   ├── FloatingLauncherService.kt (SERVICIO PRINCIPAL)
+│   │   │   ├── WidgetHost.kt (APPWIDGETHOST PERSONALIZADO)
+│   │   │   ├── WidgetHostView.kt (VISTA DE WIDGET)
 │   │   │   ├── MainActivity.kt
-│   │   │   ├── ConfigurationActivity.kt
+│   │   │   ├── WidgetConfigurationActivity.kt (NUEVO)
 │   │   │   ├── WidgetManager.kt
-│   │   │   ├── WidgetStackHost.kt
 │   │   │   └── WidgetSelectionAdapter.kt
 │   │   ├── res/
-│   │   │   ├── drawable/
-│   │   │   │   ├── ic_launcher.png (TÚ PONES)
-│   │   │   │   ├── ic_prev.png (TÚ PONES)
-│   │   │   │   ├── ic_next.png (TÚ PONES)
-│   │   │   │   └── ic_close.png (TÚ PONES)
+│   │   │   ├── drawable/ (TUS ICONOS)
+│   │   │   │   ├── ic_launcher.png
+│   │   │   │   ├── ic_prev.png
+│   │   │   │   ├── ic_next.png
+│   │   │   │   └── ic_close.png
 │   │   │   ├── layout/
 │   │   │   │   ├── activity_main.xml
 │   │   │   │   ├── activity_configuration.xml
-│   │   │   │   ├── overlay_widget_container.xml
-│   │   │   │   ├── widget_placeholder.xml
+│   │   │   │   ├── overlay_container.xml
 │   │   │   │   ├── item_available_widget.xml
 │   │   │   │   └── item_selected_widget.xml
 │   │   │   ├── values/
@@ -32,4 +32,5 @@ FloatingWidgetStack/
 │   └── build.gradle.kts
 ├── build.gradle.kts
 ├── settings.gradle.kts
+├── gradle.properties
 └── gradle/wrapper/gradle-wrapper.properties

@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Tema base -->
     <style name="Theme.FloatingWidget" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:windowBackground">@color/white</item>
         <item name="colorPrimary">#2196F3</item>
         <item name="colorPrimaryDark">#1976D2</item>
         <item name="colorAccent">#03DAC5</item>
     </style>
-    
+
+    <!-- Tema para el Launcher (con action bar) -->
+    <style name="Theme.FloatingWidget.Launcher" parent="Theme.MaterialComponents.DayNight">
+        <item name="android:windowBackground">@color/white</item>
+        <item name="colorPrimary">#2196F3</item>
+        <item name="colorPrimaryDark">#1976D2</item>
+        <item name="colorAccent">#03DAC5</item>
+    </style>
+
+    <!-- Tema para diálogos de configuración -->
     <style name="Theme.FloatingWidget.Dialog" parent="Theme.MaterialComponents.Light.Dialog">
         <item name="android:windowMinWidthMajor">90%</item>
         <item name="android:windowMinWidthMinor">90%</item>

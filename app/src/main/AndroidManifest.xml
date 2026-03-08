@@ -1,21 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.romaster.floatingwidget">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Permiso necesario para ventanas flotantes (único obligatorio) -->
+    <!-- Permisos necesarios -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-
-    <!-- Permiso opcional solo para versiones muy antiguas (Android 9 o inferior) -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="28" />
-
-    <!-- NUEVO: En lugar de QUERY_ALL_PACKAGES, declaramos qué necesitamos ver -->
-    <queries>
-        <!-- Necesitamos ver todos los widgets de app (AppWidgetProvider) instalados -->
-        <intent>
-            <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-        </intent>
-    </queries>
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
+        tools:ignore="QueryAllPackagesPermission" />
 
     <application
         android:allowBackup="true"
@@ -24,44 +14,36 @@
         android:theme="@style/Theme.FloatingWidget"
         android:supportsRtl="true">
 
-        <!-- Actividad Principal -->
+        <!-- LAUNCHER PRINCIPAL -->
         <activity
-            android:name=".MainActivity"
+            android:name=".MainLauncherActivity"
             android:exported="true"
-            android:theme="@style/Theme.FloatingWidget">
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.FloatingWidget.Launcher">
+            
+            <!-- Intent-filter para ser Launcher -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.HOME" />
+                <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
         <!-- Actividad de Configuración -->
         <activity
-            android:name=".ConfigurationActivity"
+            android:name=".WidgetConfigurationActivity"
             android:exported="false"
             android:theme="@style/Theme.FloatingWidget.Dialog" />
 
         <!-- Servicio Flotante -->
         <service
-            android:name=".FloatingWidgetService"
+            android:name=".FloatingLauncherService"
             android:exported="false"
             android:enabled="true" />
 
-        <!-- Host de Widgets (nuestro propio widget, aunque no lo uses, puede estar) -->
-        <receiver
-            android:name=".WidgetStackHost"
-            android:exported="true"
-            android:label="Widget Stack"
-            android:enabled="true">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-                <action android:name="android.appwidget.action.APPWIDGET_ENABLED" />
-                <action android:name="android.appwidget.action.APPWIDGET_DISABLED" />
-            </intent-filter>
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/widget_provider_info" />
-        </receiver>
+        <!-- Receptor para el widget host (OPCIONAL - no necesario realmente) -->
+        <!-- Lo eliminamos para evitar errores de recursos -->
 
     </application>
 </manifest>
